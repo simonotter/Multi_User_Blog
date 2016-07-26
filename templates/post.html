@@ -1,0 +1,27 @@
+<div class="post-heading">
+    <a href="/blog/{{post.key().id()}}">
+    <div class="post-title">
+
+            {{post.subject}}
+
+    </div>
+    </a>
+    <div class="post-date">{{post.created_by.name }}: {{post.created.strftime("%b %d, %Y")}}</div>
+</div>
+<div class="post-content">{{post._render_text | safe}}</div>
+
+<div class="post-footer">
+    <form method="post" action="/blog/editpost">
+        <input type="hidden" name="post_id" value="{{post.key().id()}}">
+        <input type="submit" value="Edit">
+    </form>
+
+    <form method="post" action="/blog/deletepost">
+        <input type="hidden" name="post_id" value="{{post.key().id()}}">
+        <input type="submit" value="Delete">
+    </form>
+
+    <a href="/blog/likepost?post_id={{post.key().id()}}">Like</a>
+    <a href="/blog/commentpost?post_id={{post.key().id()}}">Comment</a>
+
+</div>

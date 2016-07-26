@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simon's Multi-User Blog</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+        body {
+    position: relative;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+
+    width: 800px;
+    margin: 0 auto;
+    padding: 10px;
+    color: #333;
+}
+
+
+
+.login-area {
+    font-size: 13px;
+    color: gray;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.login-link {
+    color: gray;
+    text-decoration: none;
+}
+
+.login-link:visited {
+    color: gray;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.error {
+    color: red;
+}
+
+label {
+  display: block;
+  font-size: 20px;
+}
+
+label + label {
+    margin-top: 20px;
+}
+
+input[type=text] {
+    width: 500px;
+    font-size: 20px;
+    padding: 2px;
+    font-family: monospace;
+}
+
+input[type=password] {
+    width: 500px;
+    font-size: 20px;
+    padding: 2px;
+    font-family: monospace;
+}
+
+textarea {
+  width: 500px;
+  height: 400px;
+  font-size: 17px;
+  font-family: monospace;
+}
+
+input[type=submit] {
+  font-size: 24px;
+}
+
+.main-title {
+    display: block;
+    color: #222;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+    text-decoration: none;
+}
+
+.post + .post {
+    margin-top: 15px;
+}
+
+.post-heading {
+    position: relative;
+    border-bottom: 3px solid #666;
+}
+
+.post-title {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+}
+
+.post-title:visited {
+    color: #333;
+    text-decoration: none;
+
+}
+
+.post-date {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    color: #999;
+
+}
+
+.post-content {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.post-footer {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+.comment {
+    margin-left: 30px;
+    margin-bottom: 5px;
+}
+
+button {
+    display: inline;
+    background-color: #039dc7;
+    border: none;
+    border-radius: 4px;
+    padding: 12px;
+}
+
+
+    </style>
+</head>
+<body style="margin: 0">
+    <div class="main-title">
+        <a href="/blog/">
+            <h1>Simon's Multi-User Blog</h1>
+        </a>
+    </div>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

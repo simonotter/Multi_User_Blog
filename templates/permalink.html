@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+{{post.render() | safe }}
+
+<h3>Comments</h3>
+{% for comment in comments %}
+<div class="comment">
+    {{ comment.user.name }} {{comment.created.strftime("%H:%M %d %b, %Y")}}: {{comment.comment | safe }}
+    <form method="post" action="/blog/editcomment">
+        <input type="hidden" name="comment_id" value="{{comment.key().id()}}">
+        <button type="submit">Edit</button>
+    </form>
+    <form method="post" action="/blog/deletecomment">
+        <input type="hidden" name="comment_id" value="{{comment.key().id()}}">
+        <button type="submit">Delete</button>
+    </form>
+</div>
+<hr>
+{% endfor %}
+
+
+<br>
+<a href="/blog">Back to Blog home</a>
+
+{% endblock %}
