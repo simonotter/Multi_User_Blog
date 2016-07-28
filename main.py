@@ -649,7 +649,13 @@ class Logout(Handler):
         self.logout()
         self.redirect('/blog')
 
-app = webapp2.WSGIApplication([('/blog/?', BlogPage),
+class HomePage(Handler):
+    """ Handles the display of the home page """
+    def get(self):
+        self.render('index.html')
+
+app = webapp2.WSGIApplication([('/', HomePage),
+                               ('/blog/?', BlogPage),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newpost', NewPostPage),
                                ('/blog/deletepost', DeletePost),
