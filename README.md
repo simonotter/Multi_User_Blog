@@ -7,6 +7,9 @@ Prerequisites are jinja2, Google App Engine and Python 2.7.
 ## Author
 Simon Otter, Udacity Full Stack Nanodegree student
 
+## Access deployed app
+[Deployed app is available here](http://templates-1740.appspot.com/)
+
 ## Installation
 1. Copy the contents of this folder and it's subfolders to your machine.
 2. Create a project instance within Google App Engine (note the Application ID)
