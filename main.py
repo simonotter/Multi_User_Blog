@@ -331,7 +331,7 @@ class BlogPage(Handler):
     """ Renders the Main Blog Home page. """
     def get(self):
         posts = Post.get_top_10()
-        self.render('blog.html', posts=posts)
+        self.render('blog.html', posts=posts, user=self.user)
 
 
 class PostPage(Handler):
@@ -345,7 +345,7 @@ class PostPage(Handler):
             return
 
         comments = Comment.all().filter("post =", post)
-        self.render("permalink.html", post=post, comments=comments)
+        self.render("permalink.html", post=post, comments=comments, user=self.user)
 
 
 class NewPostPage(Handler):
@@ -353,7 +353,7 @@ class NewPostPage(Handler):
     def get(self):
         """ Renders the new post form if the user is logged in. """
         if self.user:
-            self.render('newpost.html')
+            self.render('newpost.html', user=self.user)
         else:
             self.redirect('/login')
 
@@ -379,7 +379,7 @@ class NewPostPage(Handler):
             error = "Both subject and content are required"
             self.render('newpost.html', subject=subject,
                         content=content,
-                        error=error)
+                        error=error, user=self.user)
 
 
 class DeletePost(Handler):
@@ -401,7 +401,7 @@ class DeletePost(Handler):
             else:
                 msg = ("You cannot delete this post, "
                        "as it was not created by you.")
-            self.render('confirmation.html', msg=msg)
+            self.render('confirmation.html', msg=msg, user=self.user)
         else:
             self.redirect('/login')
 
@@ -422,11 +422,12 @@ class EditPost(Handler):
                 self.render('newpost.html',
                             subject=post.subject,
                             content=post.content,
-                            post_id=post_id)
+                            post_id=post_id,
+                            user=self.user)
             else:
                 msg = ("You cannot edit this post, "
                        "as it was not created by you.")
-                self.render('edit_post.html', msg=msg)
+                self.render('edit_post.html', msg=msg, user=self.user)
         else:
             self.redirect('/login')
 
@@ -463,7 +464,7 @@ class CommentPost(Handler):
         """ Renders comment form if user is logged in. """
         if self.user:  # if logged in user
             post_id = self.request.get('post_id')
-            self.render('comment_post.html', post_id=post_id)
+            self.render('comment_post.html', post_id=post_id, user=self.user)
         else:
             self.redirect('/login')
 
@@ -493,7 +494,8 @@ class CommentPost(Handler):
                 msg = "Comment cannot be empty"
                 self.render('comment_post.html',
                             post_id=post_id,
-                            error=msg)
+                            error=msg,
+                            user=self.user)
         else:
             self.redirect('/login')
 
@@ -516,7 +518,7 @@ class DeleteComment(Handler):
             else:
                 msg = ("You cannot delete this comment, "
                        "as it was not created by you.")
-            self.render('confirmation.html', msg=msg)
+            self.render('confirmation.html', msg=msg, user=self.user)
         else:
             self.redirect('/login')
 
@@ -536,12 +538,13 @@ class EditComment(Handler):
                 self.render('comment_post.html',
                             comment=comment.comment,
                             comment_id=comment_id,
-                            post_id=comment.post.key().id())
+                            post_id=comment.post.key().id(),
+                            user=self.user)
 
             else:
                 msg = ("You cannot edit this comment, "
                        "as it was not created by you.")
-                self.render('confirmation.html', msg=msg)
+                self.render('confirmation.html', msg=msg, user=self.user)
         else:
             self.redirect('/login')
 
@@ -551,7 +554,7 @@ class SignUpHandler(Handler):
     """ Handles user sign-up. """
     def get(self):
         """ Renders signup form """
-        self.render('signup.html')
+        self.render('signup.html', user=self.user)
 
     def post(self):
         """ Validates user signup form """
@@ -562,7 +565,8 @@ class SignUpHandler(Handler):
         self.email = self.request.get('email')
 
         params = dict(username=self.username,
-                      email=self.email)
+                      email=self.email,
+                      user=self.user)
 
         if not self.isValidUserName(self.username):
             params['error_username'] = "That's not a valid username."
@@ -591,7 +595,7 @@ class SignUpHandler(Handler):
         u = User.by_name(self.username)
         if u:
             msg = "That user already exists."
-            self.render('signup.html', error_username=msg)
+            self.render('signup.html', error_username=msg, user=self.user)
         else:
             u = User.register(self.username, self.password, self.email)
             u.put()
@@ -616,7 +620,7 @@ class Login(Handler):
     """ Handles user login """
     def get(self):
         """ Renders the login form. """
-        self.render('login.html')
+        self.render('login.html', user=self.user)
 
     def post(self):
         """ Validates user password and logs the user in. """
@@ -629,7 +633,7 @@ class Login(Handler):
             self.redirect('/welcome')
         else:
             msg = 'Invalid login'
-            self.render('login.html', error=msg)
+            self.render('login.html', error=msg, user=self.user)
 
 
 class WelcomeHandler(Handler):
@@ -637,7 +641,7 @@ class WelcomeHandler(Handler):
     def get(self):
         """ Renders the user welcome page. """
         if self.user:
-            self.render('welcome.html', username=self.user.name)
+            self.render('welcome.html', user=self.user)
         else:
             self.redirect('/signup')
 

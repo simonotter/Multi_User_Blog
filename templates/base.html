@@ -145,6 +145,10 @@ button {
     padding: 12px;
 }
 
+.user-actions {
+    text-align: right;
+}
+
 
     </style>
 </head>
@@ -154,6 +158,16 @@ button {
             <h1>Simon's Multi-User Blog</h1>
         </a>
     </div>
+    <div class="user-actions">
+        {{ user.name }}
+        {% if not user %}
+            <a href="/signup">Sign up</a> |
+            <a href="/login">Login</a>
+        {% else %}
+            <a href="/logout">Logout</a>
+        {% endif %}
+    </div>
+
     {% block content %}
     {% endblock %}
 </body>
