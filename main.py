@@ -443,8 +443,12 @@ class LikePost(Handler):
             user = User.by_name(self.user.name)
             # Check if user owns the post
             if post.created_by.key().id() != user.key().id():
-                like = Like(post=post, user=user)
-                like.put()
+                # Check if user has already liked the post (can only like once)
+                liked_posts = post.likes.get() # TODO: This will sometimes return more than one!
+                if liked_post: #
+                    if user.name != liked_posts.user.name: # Check they haven't like it already
+                        like = Like(post=post, user=user)
+                        like.put()
                 self.redirect('/blog')
             else:
                 self.redirect('/blog')
