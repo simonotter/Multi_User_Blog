@@ -102,6 +102,7 @@ class PostPage(Handler):
 
         if not post:  # if post is not found, raise a 404 error
             self.error(404)
+            self.render('404error.html', user=self.user)
             return
 
         comments = Comment.all().filter("post =", post)
@@ -120,27 +121,38 @@ class NewPostPage(Handler):
 
     def post(self):
         """ Handles submission of New Post form """
-        subject = self.request.get("subject")
-        content = self.request.get("content")
-        created_by = self.user
-        post_id = self.request.get("post_id")
+        if self.user:
+            subject = self.request.get("subject")
+            content = self.request.get("content")
+            created_by = self.user
+            post_id = self.request.get("post_id")
 
-        if subject and content:
-            if post_id:  # Post is being edited, so must update existing post
-                post_key = db.Key.from_path('Post', int(post_id))
-                post = db.get(post_key)
-                post.subject = subject
-                post.content = content
-            else:  # No existing post_id, so create a new post
-                post = Post(subject=subject, content=content,
-                            created_by=created_by)
-            post.put()
-            self.redirect('/blog/%s' % str(post.key().id()))
-        else:  # subject or content are empty
-            error = "Both subject and content are required"
-            self.render('newpost.html', subject=subject,
-                        content=content,
-                        error=error, user=self.user)
+            if subject and content:
+                if post_id:  # Post is being edited, so must update existing post
+                    post_key = db.Key.from_path('Post', int(post_id))
+                    post = db.get(post_key)
+                    # Check if user owns the post
+                    if (post.created_by.key().id() ==
+                            User.by_name(self.user.name).key().id()):
+                        post.subject = subject
+                        post.content = content
+                    else:
+                        msg = ("You cannot edit this post, "
+                               "as it was not created by you.")
+                        self.render('edit_post.html', msg=msg, user=self.user)
+
+                else:  # No existing post_id, so create a new post
+                    post = Post(subject=subject, content=content,
+                                created_by=created_by)
+                post.put()
+                self.redirect('/blog/%s' % str(post.key().id()))
+            else:  # subject or content are empty
+                error = "Both subject and content are required"
+                self.render('newpost.html', subject=subject,
+                            content=content,
+                            error=error, user=self.user)
+        else:
+            self.redirect('/login')
 
 
 class DeletePost(Handler):
