@@ -33,6 +33,7 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
 
 SECRET = 'khkhsakgioteb3s676*6753r5&^%$#'
 
+
 def render_str(template, **params):
     """ Renders a Jinja HTML template.
 
@@ -110,7 +111,7 @@ def make_password_hash(username, password, salt=None):
         A string in the format salt|password_hash
     """
     if not salt:
-        salt = make_salt() # make a new salt if one hasn't be provided
+        salt = make_salt()  # make a new salt if one hasn't be provided
     password_hash = hashlib.sha256(username + password + salt).hexdigest()
     return '%s,%s' % (salt, password_hash)
 
@@ -219,7 +220,7 @@ class Post(db.Model):
     def get_top_10(cls):
         """ Retrieves top 10 latest blog posts """
         return db.GqlQuery("SELECT * FROM Post "
-                            "ORDER BY created DESC limit 10")
+                           "ORDER BY created DESC limit 10")
 
     def render(self):
         """ Renders the blog post into HTML. """
@@ -253,8 +254,10 @@ class Comment(db.Model):
         comment: A string of the comment being made on the Blog Post.
         created: The datetime when the comment was created.
     """
-    post = db.ReferenceProperty(Post, required=True, collection_name='comments')
-    user = db.ReferenceProperty(User, required=True, collection_name='comments')
+    post = db.ReferenceProperty(Post, required=True,
+                                collection_name='comments')
+    user = db.ReferenceProperty(User, required=True,
+                                collection_name='comments')
     comment = db.StringProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
 
@@ -340,12 +343,13 @@ class PostPage(Handler):
         key = db.Key.from_path('Post', int(post_id))
         post = db.get(key)
 
-        if not post: # if post is not found, raise a 404 error
+        if not post:  # if post is not found, raise a 404 error
             self.error(404)
             return
 
         comments = Comment.all().filter("post =", post)
-        self.render("permalink.html", post=post, comments=comments, user=self.user)
+        self.render("permalink.html", post=post, comments=comments,
+                    user=self.user)
 
 
 class NewPostPage(Handler):
@@ -370,12 +374,12 @@ class NewPostPage(Handler):
                 post = db.get(post_key)
                 post.subject = subject
                 post.content = content
-            else: # No existing post_id, so create a new post
+            else:  # No existing post_id, so create a new post
                 post = Post(subject=subject, content=content,
                             created_by=created_by)
             post.put()
             self.redirect('/blog/%s' % str(post.key().id()))
-        else: # subject or content are empty
+        else:  # subject or content are empty
             error = "Both subject and content are required"
             self.render('newpost.html', subject=subject,
                         content=content,
@@ -393,7 +397,7 @@ class DeletePost(Handler):
 
             # Check if user owns the post
             if (post.created_by.key().id() ==
-                User.by_name(self.user.name).key().id()):
+                    User.by_name(self.user.name).key().id()):
 
                 post.delete(post_key)
                 msg = "Your post has been successfully deleted."
@@ -418,7 +422,7 @@ class EditPost(Handler):
 
             # Check if user owns the post
             if (post.created_by.key().id() ==
-                User.by_name(self.user.name).key().id()):
+                    User.by_name(self.user.name).key().id()):
                 self.render('newpost.html',
                             subject=post.subject,
                             content=post.content,
@@ -445,12 +449,14 @@ class LikePost(Handler):
             # Check if user owns the post
             if post.created_by.key().id() != user.key().id():
                 # Check if user has already liked the post (can only like once)
-                liked_posts = post.likes.get() # TODO: This will sometimes return more than one!
-                if liked_posts: # there are some likes already on this post
-                    if user.name != liked_posts.user.name: # Check they haven't like it already
+                # TODO: This will sometimes return more than one!
+                liked_posts = post.likes.get()
+                if liked_posts:  # there are some likes already on this post
+                    # Check they haven't like it already
+                    if user.name != liked_posts.user.name:
                         like = Like(post=post, user=user)
                         like.put()
-                else: # no likes on this post, so allow to add anyway
+                else:  # no likes on this post, so allow to add anyway
                     like = Like(post=post, user=user)
                     like.put()
 
@@ -514,7 +520,7 @@ class DeleteComment(Handler):
             comment = db.get(comment_key)
             # Check if user owns the post
             if (comment.user.key().id() ==
-                User.by_name(self.user.name).key().id()):
+                    User.by_name(self.user.name).key().id()):
 
                 db.delete(comment_key)
                 msg = "Your comment has been successfully deleted."
@@ -537,7 +543,7 @@ class EditComment(Handler):
             comment = db.get(comment_key)
             # Check if user owns the post
             if (comment.user.key().id() ==
-                User.by_name(self.user.name).key().id()):
+                    User.by_name(self.user.name).key().id()):
 
                 self.render('comment_post.html',
                             comment=comment.comment,
@@ -595,7 +601,8 @@ class SignUpHandler(Handler):
             self.done()
 
     def done(self):
-        """ make sure the user doesn't already exist, then add to datastore. """
+        """ make sure the user doesn't already exist,
+            then add to datastore. """
         u = User.by_name(self.username)
         if u:
             msg = "That user already exists."
@@ -657,6 +664,7 @@ class Logout(Handler):
         self.logout()
         self.redirect('/blog')
 
+
 class HomePage(Handler):
     """ Handles the display of the home page """
     def get(self):
@@ -675,4 +683,4 @@ app = webapp2.WSGIApplication([('/', HomePage),
                                ('/signup', SignUpHandler),
                                ('/login', Login),
                                ('/logout', Logout),
-                               ('/welcome', WelcomeHandler),], debug=True)
+                               ('/welcome', WelcomeHandler)], debug=True)
