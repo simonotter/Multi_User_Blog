@@ -128,7 +128,7 @@ class NewPostPage(Handler):
             post_id = self.request.get("post_id")
 
             if subject and content:
-                if post_id:  # Post is being edited, so must update existing post
+                if post_id:  # Post is being edited, so update existing post
                     post_key = db.Key.from_path('Post', int(post_id))
                     post = db.get(post_key)
                     # Check if user owns the post
@@ -434,12 +434,7 @@ class Logout(Handler):
         self.redirect('/blog')
 
 
-class HomePage(Handler):
-    """ Handles the display of the home page """
-    def get(self):
-        self.render('index.html')
-
-app = webapp2.WSGIApplication([('/', HomePage),
+app = webapp2.WSGIApplication([('/', BlogPage),
                                ('/blog/?', BlogPage),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newpost', NewPostPage),
